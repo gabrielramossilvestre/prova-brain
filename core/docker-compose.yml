@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  postgres-brain:
+    image: postgres-brain
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=brainweb
+      - POSTGRES_PASSWORD=brainweb
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    networks:
+      - brain-network
+  prova-brain:
+    image: prova-brain
+    restart: always
+    build:
+      context: .
+      dockerfile: src/main/Dockerfile
+    working_dir: /
+    environment:
+      TZ: America/Sao_Paulo
+    ports:
+      - "8080:8080"
+    command: mvn spring-boot:run
+    links:
+      - postgres-brain
+    depends_on:
+      - postgres-brain
+    networks:
+      - brain-network
+networks:
+  brain-network:
+    driver: bridge
