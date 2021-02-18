@@ -3,6 +3,9 @@ version: '3'
 services:
   postgres-brain:
     image: postgres-brain
+    build:
+      context: .
+      dockerfile: src/main/Resources/db/schema/Dockerfile
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=brainweb
