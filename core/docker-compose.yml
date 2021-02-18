@@ -1,6 +1,13 @@
 version: '3'
 
 services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - prova-brain1
+      - prova-brain2
   postgres-brain:
     image: postgres-brain
     build:
@@ -16,17 +23,35 @@ services:
       - 5432
     networks:
       - brain-network
-  prova-brain:
+  prova-brain1:
     image: prova-brain
     restart: always
     build:
       context: .
-      dockerfile: src/main/Dockerfile
+      dockerfile: src/main/docker/Dockerfile
     working_dir: /
     environment:
       TZ: America/Sao_Paulo
     ports:
-      - "8080:8080"
+      - "8090:8080"
+    command: mvn spring-boot:run
+    links:
+      - postgres-brain
+    depends_on:
+      - postgres-brain
+    networks:
+      - brain-network
+  prova-brain2:
+    image: prova-brain
+    restart: always
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile
+    working_dir: /
+    environment:
+      TZ: America/Sao_Paulo
+    ports:
+      - "8091:8080"
     command: mvn spring-boot:run
     links:
       - postgres-brain
